@@ -4,7 +4,7 @@ project(autumnframework VERSION 0.1.0)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 set(INCLUDE_ALL_DIR
-    ${CMAKE_SOURCE_DIR}/include/interface
+    ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/core
 )
 
