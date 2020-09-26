@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<TITLE>
+TypeManager.cpp
+</TITLE>
+</HEAD>
+<BODY>
+<PRE>
+<font color="green">/*
+* Copyright 2006 the original author or authors.
+* 
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* 
+*      http://www.apache.org/licenses/LICENSE-2.0
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/</font>
+
+<font color="blue">#include</font> <font color="maroon">&#60;cstdlib&#62;</font>
+<font color="blue">#include</font> <font color="maroon">"TypeManager.h"</font>
+<font color="blue">#include</font> <font color="maroon">"IAutumnType.h"</font>
+<font color="blue">#include</font> <font color="maroon">"BasicType.h"</font>
+<font color="blue">#include</font> <font color="maroon">"PointerType.h"</font>
+<font color="blue">#include</font> <font color="maroon">"StringType.h"</font>
+
+<font color="blue">namespace</font> Autumn<font color="black">{</font>
+
+<font color="green">// The basic types</font>
+<font color="blue">const</font> string charAT<font color="black">(</font><font color="maroon">"char"</font><font color="black">)</font>;
+<font color="blue">const</font> string ucharAT<font color="black">(</font><font color="maroon">"unsignedchar"</font><font color="black">)</font>;
+<font color="blue">const</font> string shortAT<font color="black">(</font><font color="maroon">"short"</font><font color="black">)</font>;
+<font color="blue">const</font> string ushortAT<font color="black">(</font><font color="maroon">"unsignedshort"</font><font color="black">)</font>;
+<font color="blue">const</font> string intAT<font color="black">(</font><font color="maroon">"int"</font><font color="black">)</font>;
+<font color="blue">const</font> string uintAT<font color="black">(</font><font color="maroon">"unsignedint"</font><font color="black">)</font>;
+<font color="blue">const</font> string longAT<font color="black">(</font><font color="maroon">"long"</font><font color="black">)</font>;
+<font color="blue">const</font> string ulongAT<font color="black">(</font><font color="maroon">"unsignedlong"</font><font color="black">)</font>;
+<font color="blue">const</font> string floatAT<font color="black">(</font><font color="maroon">"float"</font><font color="black">)</font>;
+<font color="blue">const</font> string doubleAT<font color="black">(</font><font color="maroon">"double"</font><font color="black">)</font>;
+<font color="blue">const</font> string stringAT<font color="black">(</font><font color="maroon">"string"</font><font color="black">)</font>;
+<font color="blue">const</font> string cstrAT<font color="black">(</font><font color="maroon">"char*"</font><font color="black">)</font>;
+<font color="blue">const</font> string ucstrAT<font color="black">(</font><font color="maroon">"unsignedchar*"</font><font color="black">)</font>;
+<font color="blue">const</font> string pointerAT<font color="black">(</font><font color="maroon">"*"</font><font color="black">)</font>;
+
+
+<font color="green">/** 
+ * The following global template and functions are for basic value type.
+ */</font>
+<font color="blue">typedef</font> <font color="blue">char</font><font color="black">*</font> charstrPointer;
+
+<font color="green">//return the first char, maybe lost the else.</font>
+<font color="blue">char</font>    atoch<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> s<font color="black">[</font><font color="maroon">0</font><font color="black">]</font>;<font color="black">}</font>
+<font color="blue">short</font>   atosh<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> <font color="black">(</font><font color="blue">short</font><font color="black">)</font>atoi<font color="black">(</font>s<font color="black">)</font>;<font color="black">}</font>
+<font color="blue">int</font>     atoint<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> atoi<font color="black">(</font>s<font color="black">)</font>;<font color="black">}</font>
+<font color="blue">long</font>    atolong<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> atol<font color="black">(</font>s<font color="black">)</font>;<font color="black">}</font>
+<font color="blue">unsigned</font> <font color="blue">long</font> atoul<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> strtoul<font color="black">(</font>s, NULL, <font color="maroon">0</font><font color="black">)</font>;<font color="black">}</font>
+<font color="blue">float</font>   atofl<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> <font color="black">(</font><font color="blue">float</font><font color="black">)</font>atof<font color="black">(</font>s<font color="black">)</font>;<font color="black">}</font>
+<font color="blue">double</font>  atodb<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font><font color="blue">return</font> atof<font color="black">(</font>s<font color="black">)</font>;<font color="black">}</font>
+charstrPointer atocs<font color="black">(</font><font color="blue">const</font> <font color="blue">char</font><font color="black">*</font> s<font color="black">)</font><font color="black">{</font>
+    <font color="blue">char</font><font color="black">*</font> p <font color="black">=</font> <font color="blue">new</font> <font color="blue">char</font><font color="black">[</font>strlen<font color="black">(</font>s<font color="black">)</font><font color="black">+</font><font color="maroon">1</font><font color="black">]</font>;
+    strcpy<font color="black">(</font>p, s<font color="black">)</font>;
+    <font color="blue">return</font> <font color="black">(</font>charstrPointer<font color="black">)</font>p;
+<font color="black">}</font>
+
+<font color="blue">void</font> freech<font color="black">(</font><font color="blue">char</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freesh<font color="black">(</font><font color="blue">short</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freeint<font color="black">(</font><font color="blue">int</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freelong<font color="black">(</font><font color="blue">long</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freeul<font color="black">(</font><font color="blue">unsigned</font> <font color="blue">long</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freefl<font color="black">(</font><font color="blue">float</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freedb<font color="black">(</font><font color="blue">double</font> p<font color="black">)</font><font color="black">{</font><font color="black">}</font>
+<font color="blue">void</font> freecs<font color="black">(</font>charstrPointer p<font color="black">)</font><font color="black">{</font>
+    <font color="blue">delete</font> p;
+<font color="black">}</font>
+
+<font color="green">/** 
+ * Constructor, initialize the inline type
+ */</font>
+TypeManager<font color="black">:</font><font color="black">:</font>TypeManager<font color="black">(</font><font color="black">)</font>
+<font color="black">{</font>
+    <font color="green">//I think that unsigned is same to singed to deal with except long</font>
+    <font color="green">// The following is for basic type.</font>
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">char</font>, atoch, freech<font color="black">&#62;</font><font color="black">(</font>charAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">char</font>, atoch, freech<font color="black">&#62;</font><font color="black">(</font>ucharAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">short</font>, atosh, freesh<font color="black">&#62;</font><font color="black">(</font>shortAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">short</font>, atosh, freesh<font color="black">&#62;</font><font color="black">(</font>ushortAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">int</font>, atoint, freeint<font color="black">&#62;</font><font color="black">(</font>intAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">int</font>, atoint, freeint<font color="black">&#62;</font><font color="black">(</font>uintAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">long</font>, atolong, freelong<font color="black">&#62;</font><font color="black">(</font>longAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">unsigned</font> <font color="blue">long</font>, atoul, freeul<font color="black">&#62;</font><font color="black">(</font>ulongAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">float</font>, atofl, freefl<font color="black">&#62;</font><font color="black">(</font>floatAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font><font color="blue">double</font>, atodb, freedb<font color="black">&#62;</font><font color="black">(</font>doubleAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font>charstrPointer, atocs, freecs<font color="black">&#62;</font><font color="black">(</font>cstrAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> BasicType<font color="black">&#60;</font>charstrPointer, atocs, freecs<font color="black">&#62;</font><font color="black">(</font>ucstrAT<font color="black">)</font> <font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> <font color="blue">new</font> StringType<font color="black">)</font>;
+
+    PointerType<font color="black">*</font> ppt <font color="black">=</font> <font color="blue">new</font> PointerType;
+    ppt<font color="black">-</font><font color="black">&#62;</font>setTypeManager<font color="black">(</font><font color="blue">this</font><font color="black">)</font>;
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font> ppt <font color="black">)</font>;
+<font color="black">}</font>
+
+<font color="green">/** 
+ * Destructor
+ */</font>
+TypeManager<font color="black">:</font><font color="black">:</font>~TypeManager<font color="black">(</font><font color="black">)</font><font color="black">{</font>
+    AutumnLog<font color="black">:</font><font color="black">:</font>getInstance<font color="black">(</font><font color="black">)</font><font color="black">-</font><font color="black">&#62;</font>debug<font color="black">(</font><font color="maroon">"TypeManager-&#62;~TypeManager"</font><font color="black">)</font>;
+
+    <font color="blue">void</font> <font color="black">(</font><font color="black">*</font>pf<font color="black">)</font><font color="black">(</font>IBeanWrapper<font color="black">*</font><font color="black">)</font>;
+    vector<font color="black">&#60;</font>IAutumnType<font color="black">*</font><font color="black">&#62;</font><font color="black">:</font><font color="black">:</font>iterator it;
+    vector<font color="black">&#60;</font>IBeanWrapper<font color="black">*</font><font color="black">&#62;</font><font color="black">:</font><font color="black">:</font>iterator itw;
+
+    <font color="green">// delete wrappers, wrapper will delete type maker</font>
+    <font color="blue">for</font><font color="black">(</font>itw <font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>WrapperList.begin<font color="black">(</font><font color="black">)</font>; itw <font color="black">!</font><font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>WrapperList.end<font color="black">(</font><font color="black">)</font>; itw<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+        <font color="blue">for</font><font color="black">(</font>it <font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.begin<font color="black">(</font><font color="black">)</font>; it <font color="black">!</font><font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.end<font color="black">(</font><font color="black">)</font>; it<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+            <font color="blue">if</font><font color="black">(</font> <font color="black">*</font>it <font color="black">=</font><font color="black">=</font> <font color="black">(</font><font color="black">*</font>itw<font color="black">)</font><font color="black">-</font><font color="black">&#62;</font>getBean<font color="black">(</font><font color="black">)</font> <font color="black">)</font> <font color="black">{</font>
+                <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.erase<font color="black">(</font>it<font color="black">)</font>;
+                <font color="blue">break</font>;
+            <font color="black">}</font>
+        <font color="black">}</font>
+        pf <font color="black">=</font> <font color="black">(</font><font color="black">*</font>itw<font color="black">)</font><font color="black">-</font><font color="black">&#62;</font>getWrapperDeleter<font color="black">(</font><font color="black">)</font>;
+        pf<font color="black">(</font><font color="black">*</font>itw<font color="black">)</font>;
+    <font color="black">}</font>
+    
+    <font color="green">// delete inline type maker</font>
+    <font color="blue">for</font><font color="black">(</font>it <font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.begin<font color="black">(</font><font color="black">)</font>; it <font color="black">!</font><font color="black">=</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.end<font color="black">(</font><font color="black">)</font>; it<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+            <font color="blue">delete</font> <font color="black">*</font>it;
+    <font color="black">}</font>
+    
+    <font color="blue">delete</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>beanMaker;
+<font color="black">}</font>
+
+IAutumnType<font color="black">*</font> TypeManager<font color="black">:</font><font color="black">:</font>findTypeBean<font color="black">(</font><font color="blue">const</font> string<font color="black">&</font> type<font color="black">)</font><font color="blue">const</font>
+<font color="black">{</font>
+    vector<font color="black">&#60;</font>IAutumnType<font color="black">*</font><font color="black">&#62;</font><font color="black">:</font><font color="black">:</font>const_iterator tmp;
+    <font color="blue">for</font><font color="black">(</font> tmp<font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.begin<font color="black">(</font><font color="black">)</font>; tmp<font color="black">!</font><font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.end<font color="black">(</font><font color="black">)</font>; tmp<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+        <font color="blue">if</font><font color="black">(</font> tmp<font color="black">[</font><font color="maroon">0</font><font color="black">]</font><font color="black">-</font><font color="black">&#62;</font>isThisType<font color="black">(</font>type<font color="black">)</font> <font color="black">)</font><font color="black">{</font>
+            <font color="blue">return</font> tmp<font color="black">[</font><font color="maroon">0</font><font color="black">]</font>;
+        <font color="black">}</font>
+    <font color="black">}</font>
+
+    AutumnLog<font color="black">:</font><font color="black">:</font>getInstance<font color="black">(</font><font color="black">)</font><font color="black">-</font><font color="black">&#62;</font>debug<font color="black">(</font><font color="maroon">"TypeManager-&#62;findTypeBean: "</font> <font color="black">+</font> type<font color="black">)</font>;
+    <font color="blue">return</font> <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>beanMaker;
+<font color="black">}</font>
+
+<font color="blue">void</font> TypeManager<font color="black">:</font><font color="black">:</font>addTypeBean<font color="black">(</font>IAutumnType<font color="black">*</font> at<font color="black">)</font>
+<font color="black">{</font>
+    vector<font color="black">&#60;</font>IAutumnType<font color="black">*</font><font color="black">&#62;</font><font color="black">:</font><font color="black">:</font>iterator tmp;
+    <font color="blue">for</font><font color="black">(</font> tmp<font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.begin<font color="black">(</font><font color="black">)</font>; tmp<font color="black">!</font><font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.end<font color="black">(</font><font color="black">)</font>; tmp<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+        <font color="blue">if</font><font color="black">(</font> tmp<font color="black">[</font><font color="maroon">0</font><font color="black">]</font> <font color="black">=</font><font color="black">=</font> at<font color="black">)</font><font color="black">{</font>
+            <font color="blue">return</font>;
+        <font color="black">}</font>
+    <font color="black">}</font>
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>TypeList.push_back<font color="black">(</font>at<font color="black">)</font>;
+<font color="black">}</font>
+
+<font color="blue">void</font> TypeManager<font color="black">:</font><font color="black">:</font>addTypeBean<font color="black">(</font>IBeanWrapper<font color="black">*</font> pw<font color="black">)</font>
+<font color="black">{</font>
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>addTypeBean<font color="black">(</font><font color="black">(</font>IAutumnType<font color="black">*</font><font color="black">)</font>pw<font color="black">-</font><font color="black">&#62;</font>getBean<font color="black">(</font><font color="black">)</font><font color="black">)</font>;
+    
+    vector<font color="black">&#60;</font>IBeanWrapper<font color="black">*</font><font color="black">&#62;</font><font color="black">:</font><font color="black">:</font>iterator tmp;
+    <font color="blue">for</font><font color="black">(</font> tmp<font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>WrapperList.begin<font color="black">(</font><font color="black">)</font>; tmp<font color="black">!</font><font color="black">=</font><font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>WrapperList.end<font color="black">(</font><font color="black">)</font>; tmp<font color="black">+</font><font color="black">+</font><font color="black">)</font><font color="black">{</font>
+        <font color="blue">if</font><font color="black">(</font> tmp<font color="black">[</font><font color="maroon">0</font><font color="black">]</font> <font color="black">=</font><font color="black">=</font> pw<font color="black">)</font><font color="black">{</font>
+            <font color="blue">return</font>;
+        <font color="black">}</font>
+    <font color="black">}</font>
+    <font color="blue">this</font><font color="black">-</font><font color="black">&#62;</font>WrapperList.push_back<font color="black">(</font>pw<font color="black">)</font>;
+<font color="black">}</font>
+
+<font color="black">}</font> <font color="green">// End namespace Autumn</font>
+
+</PRE>
+</BODY>
+</HTML>
